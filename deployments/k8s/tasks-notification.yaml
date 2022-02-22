@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasks-notification-deployment
+  labels:
+    app: tasks-notification
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasks-notification
+  template:
+    metadata:
+      labels:
+        app: tasks-notification
+    spec:
+      containers:
+        # https://minikube.sigs.k8s.io/docs/handbook/pushing/
+        # Local development - need to create the docker image
+      - name: tasks-client
+        image: tasks-client:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        # App specific
+        - name: LOG_LEVEL
+          valueFrom:
+            secretKeyRef:
+              name: tasks-map
+              key: log_level
+        # RMQ 
+        - name: RMQ_ADDR
+          valueFrom:
+            configMapKeyRef:
+              name: tasks-map
+              key: rmq_addr
+        - name: RMQ_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: tasks-map
+              key: rmq_port
+        - name: RMQ_USER
+          valueFrom:
+            configMapKeyRef:
+              name: infrastructure-secrets
+              key: rmq_user
+        - name: RMQ_PWD
+          valueFrom:
+            configMapKeyRef:
+              name: infrastructure-secrets
+              key: rmq_pwd
+        - name: RMQ_VHOST
+          valueFrom:
+            configMapKeyRef:
+              name: tasks-map
+              key: rmq_vhost
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tasks-notification-service
+spec:
+  selector:
+    app: tasks-notification
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30002
+      # minikube service tasks-service
+
+# TODO: Configure possible Ingress

@@ -1,0 +1,289 @@
+basePath: /api/v1/
+definitions:
+  dto.TaskCreateRequest:
+    properties:
+      summary:
+        maxLength: 2500
+        type: string
+    required:
+    - summary
+    type: object
+  dto.TaskCreateResponse:
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+    required:
+    - status
+    type: object
+  dto.TaskFilterResponse:
+    properties:
+      status:
+        type: string
+      tasks:
+        items:
+          $ref: '#/definitions/dto.TaskSingleResponse'
+        type: array
+    type: object
+  dto.TaskPatchRequest:
+    properties:
+      completed_date:
+        type: integer
+      summary:
+        maxLength: 2500
+        type: string
+    type: object
+  dto.TaskResponse:
+    properties:
+      completed_date:
+        type: integer
+      created_at:
+        type: integer
+      modified_at:
+        type: integer
+      summary:
+        type: string
+      task_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.TaskSingleResponse:
+    properties:
+      completed_date:
+        type: integer
+      created_at:
+        type: integer
+      modified_at:
+        type: integer
+      task_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+host: 0.0.0.0:8000
+info:
+  contact: {}
+  description: Swagger API for Golang Project tasks.
+  title: Tasks API
+  version: "1.0"
+paths:
+  /tasks:
+    get:
+      description: Collects the whole task information
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: name search by user_id
+        in: query
+        name: user_id
+        type: string
+      - description: date to search for completed tasks
+        in: query
+        name: completed_date_gt
+        type: integer
+      - description: date to search for created tasks
+        in: query
+        name: created_at_gt
+        type: integer
+      - description: results page
+        in: query
+        name: page
+        type: integer
+      - description: results limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TaskFilterResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get a specific task
+      tags:
+      - task
+    post:
+      consumes:
+      - application/json
+      description: Creates a new task
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The task body to be created
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TaskCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.TaskCreateResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Creates a new task
+      tags:
+      - task
+  /tasks/{task_id}:
+    delete:
+      description: Deletes a given task
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: the task identifier to be deleted
+        in: path
+        name: task_id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Deletes a task
+      tags:
+      - task
+    get:
+      description: Collects the whole task information
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: the task identifier to collect
+        in: path
+        name: task_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TaskResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get a specific task
+      tags:
+      - task
+    patch:
+      consumes:
+      - application/json
+      description: Updates a given task
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: the task identifier to updated
+        in: path
+        name: task_id
+        required: true
+        type: string
+      - description: The task body to be created
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TaskPatchRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Updates a task
+      tags:
+      - task
+swagger: "2.0"

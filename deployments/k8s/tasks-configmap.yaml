@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tasks-map
+data:
+  log_level: info
+
+  database_url: mysql
+  database_port: "3306"
+  database_name: tasks
+
+  rmq_addr: rmq
+  rmq_port: "5672"
+  rmq_vhost: tasks

@@ -1,0 +1,92 @@
+version: "3.9"
+
+services:
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./build/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - tasks
+    ports:
+      - "8000:8000"
+    networks:
+      - dev
+
+  tasks_client:
+    build:
+      context: .
+      dockerfile: build/Dockerfile-client
+    environment:
+      - RMQ_ADDR=rabbitmq
+      - RMQ_VHOST=tasks
+      - TASKS_COMPLETE_ROUTING=tasks.completed
+    depends_on:
+      - tasks
+    networks:
+      - dev
+
+  tasks:
+    build:
+      context: .
+      dockerfile: build/Dockerfile-server
+    environment:
+      - DB_ADDR=mysql
+      - DB_PORT=3306
+      - DB_USER=mysql
+      - DB_PWD=mysql
+      - DB_NAME=tasks
+      - RMQ_ADDR=rabbitmq
+      - RMQ_VHOST=tasks
+      - TASKS_COMPLETE_ROUTING=tasks.completed
+      - AES_SECRET=+MbQeThWmZq4t7w!z%C*F-J@NcRfUjXn
+      - SERVER_PORT=8000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - dev
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_HOST=mysql
+      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_PASSWORD=mysql
+      - MYSQL_USER=mysql
+      - MYSQL_DATABASE=tasks
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'mysql --database=$$MYSQL_DATABASE --password=$$MYSQL_PASSWORD --execute="SELECT count(table_name) > 0 FROM information_schema.tables;" --skip-column-names -B'
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 4
+    networks:
+      - dev
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_VHOST=tasks
+    volumes:
+      - mqata:/var/lib/rabbitmq/
+    networks:
+      - dev
+
+networks:
+  dev:
+    driver: bridge
+
+volumes:
+  mqata:
+  dbdata:

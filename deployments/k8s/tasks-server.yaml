@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasks-server-deployment
+  labels:
+    app: tasks-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasks-server
+  template:
+    metadata:
+      labels:
+        app: tasks-server
+    spec:
+      containers:
+        # https://minikube.sigs.k8s.io/docs/handbook/pushing/
+        # Local development - need to create the docker image
+      - name: tasks-server
+        image: tasks-server:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        # App specific
+        - name: AES_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tasks-secrets
+              key: aes_secret
+        - name: LOG_LEVEL
+          valueFrom:
+            secretKeyRef:
+              name: tasks-map
+              key: log_level
+        # DB
+        - name: DB_ADDR
+          valueFrom:
+            configMapKeyRef:
+              name: tasks-map
+              key: database_url
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: tasks-map
+              key: database_port
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: tasks-map
+              key: database_name
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: infrastructure-secrets
+              key: db_username
+        - name: DB_PWD
+          valueFrom:
+            secretKeyRef:
+              name: infrastructure-secrets
+              key: db_password
+        # RMQ 
+        - name: RMQ_ADDR
+          valueFrom:
+            configMapKeyRef:
+              name: tasks-map
+              key: rmq_addr
+        - name: RMQ_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: tasks-map
+              key: rmq_port
+        - name: RMQ_USER
+          valueFrom:
+            configMapKeyRef:
+              name: infrastructure-secrets
+              key: rmq_user
+        - name: RMQ_PWD
+          valueFrom:
+            configMapKeyRef:
+              name: infrastructure-secrets
+              key: rmq_pwd
+        - name: RMQ_VHOST
+          valueFrom:
+            configMapKeyRef:
+              name: tasks-map
+              key: rmq_vhost
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tasks-service
+spec:
+  selector:
+    app: tasks-server
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30002
+      # minikube service tasks-service
+
+# TODO: Configure possible Ingress

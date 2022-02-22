@@ -1,0 +1,11 @@
+repos:
+-   repo: local
+    hooks:
+    - id: gosec
+      name: gosec
+      entry: make gosec
+      language: system
+    - id: golangci
+      name: golangci
+      entry: make golangci
+      language: system
