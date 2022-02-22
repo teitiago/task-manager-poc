@@ -63,12 +63,5 @@ metadata:
 spec:
   selector:
     app: tasks-notification
-  type: LoadBalancer
-  ports:
-    - protocol: TCP
-      port: 8000
-      targetPort: 8000
-      nodePort: 30002
-      # minikube service tasks-service
 
-# TODO: Configure possible Ingress
+
