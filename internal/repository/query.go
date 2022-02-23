@@ -27,6 +27,7 @@ type taskQuery struct {
 
 // NewTaskQuery Builds a new task query to be used on the
 // storage interface.
+// NOTE: THIS MUST BE REFACTORED TO USE THE OPTIONS PATTERN (https://www.sohamkamani.com/golang/options-pattern/)
 func NewTaskQuery(querySize int) (*taskQuery, error) {
 
 	if querySize < 0 {
