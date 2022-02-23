@@ -76,21 +76,20 @@ func NewTaskHandler(service TaskService) *taskHandler {
 	return &taskHandler{service: service}
 }
 
-// TODO: Add sort parameter
-
 // @Summary Get a specific task
 // @Description Collects the whole task information
 // @Tags task
 // @Param Authorization header string true "Bearer"
-// @Param user_id query string false  "name search by user_id"
-// @Param completed_date_gt query int false  "date to search for completed tasks"
-// @Param completed_date_lt query int false  "date to search for completed tasks"
-// @Param created_at_gt query int false  "date to search for created tasks"
-// @Param created_at_lt query int false  "date to search for created tasks"
-// @Param modified_at_gt query int false  "date to search for modified tasks"
-// @Param modified_at_lt query int false  "date to search for modified tasks"
-// @Param page query int false  "results page"
-// @Param limit query int false  "results limit"
+// @Param user_id query string false  "name search by user_id example `74531653-252b-48c7-b562-63e82f5e3466`"
+// @Param completed_date_gt query int false  "timestamp in seconds to search for completed tasks example `1645604999`"
+// @Param completed_date_lt query int false  "timestamp in seconds to search for completed tasks example `1645604999`"
+// @Param created_at_gt query int false  "timestamp in seconds to search for created tasks example `1645604999`"
+// @Param created_at_lt query int false  "timestamp in seconds to search for created tasks example `1645604999`"
+// @Param modified_at_gt query int false  "timestamp in seconds to search for modified tasks example `1645604999`"
+// @Param modified_at_lt query int false  "timestamp in seconds to search for modified tasks example `1645604999`"
+// @Param page query int false  "results page example `1`"
+// @Param limit query int false  "results limit example `10`"
+// @Param sort query string false  "how to sort results, example `created_at asc`"
 // @Produce json
 // @Success 200 {object} dto.TaskFilterResponse
 // @Failure 400 {string} string "Bad request"
@@ -102,6 +101,7 @@ func (handler *taskHandler) ListTasks(c *gin.Context) {
 	filter := make(map[string]interface{})
 
 	// TODO: REFACTOR USE GIN QUERY BINDING (https://github.com/gin-gonic/gin/issues/742#issuecomment-264681292)
+	// TODO: Use swagger examples on query struct (https://github.com/swaggo/swag/issues/445#issuecomment-904380724)
 	// Maybe remove task query
 	var err error
 	limit := 10
@@ -145,6 +145,8 @@ func (handler *taskHandler) ListTasks(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
+
+	// TODO: remove the status not found as the resource was found
 	if tasks == nil {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
@@ -165,7 +167,7 @@ func (handler *taskHandler) ListTasks(c *gin.Context) {
 // @Description Collects the whole task information
 // @Tags task
 // @Param Authorization header string true "Bearer"
-// @Param task_id path string  true  "the task identifier to collect"
+// @Param task_id path string  true  "the task identifier to collect example `74531653-252b-48c7-b562-63e82f5e3466`"
 // @Produce json
 // @Success 200 {object} dto.TaskResponse
 // @Failure 400 {string} string "Bad request"
@@ -236,7 +238,7 @@ func (handler *taskHandler) CreateTask(c *gin.Context) {
 // @Description Deletes a given task
 // @Tags task
 // @Param Authorization header string true "Bearer"
-// @Param task_id path string  true  "the task identifier to be deleted"
+// @Param task_id path string  true  "the task identifier to be deleted example `74531653-252b-48c7-b562-63e82f5e3466`"
 // @Success 204
 // @Failure 400 {string} string "Bad request"
 // @Failure 401 {string} string "Unauthorized"
@@ -265,7 +267,7 @@ func (handler *taskHandler) DeleteTask(c *gin.Context) {
 // @Description Updates a given task
 // @Tags task
 // @Param Authorization header string true "Bearer"
-// @Param task_id path string  true  "the task identifier to updated"
+// @Param task_id path string  true  "the task identifier to updated example `74531653-252b-48c7-b562-63e82f5e3466`"
 // @Accept json
 // @Produce json
 // @Param message body dto.TaskPatchRequest true "The task body to be created"

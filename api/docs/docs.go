@@ -43,32 +43,62 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "name search by user_id",
+                        "description": "name search by user_id example ` + "`" + `74531653-252b-48c7-b562-63e82f5e3466` + "`" + `",
                         "name": "user_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "date to search for completed tasks",
+                        "description": "timestamp in seconds to search for completed tasks example ` + "`" + `1645604999` + "`" + `",
                         "name": "completed_date_gt",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "date to search for created tasks",
+                        "description": "timestamp in seconds to search for completed tasks example ` + "`" + `1645604999` + "`" + `",
+                        "name": "completed_date_lt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "timestamp in seconds to search for created tasks example ` + "`" + `1645604999` + "`" + `",
                         "name": "created_at_gt",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "results page",
+                        "description": "timestamp in seconds to search for created tasks example ` + "`" + `1645604999` + "`" + `",
+                        "name": "created_at_lt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "timestamp in seconds to search for modified tasks example ` + "`" + `1645604999` + "`" + `",
+                        "name": "modified_at_gt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "timestamp in seconds to search for modified tasks example ` + "`" + `1645604999` + "`" + `",
+                        "name": "modified_at_lt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "results page example ` + "`" + `1` + "`" + `",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "results limit",
+                        "description": "results limit example ` + "`" + `10` + "`" + `",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "how to sort results, example ` + "`" + `created_at asc` + "`" + `",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -189,7 +219,7 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "the task identifier to collect",
+                        "description": "the task identifier to collect example ` + "`" + `74531653-252b-48c7-b562-63e82f5e3466` + "`" + `",
                         "name": "task_id",
                         "in": "path",
                         "required": true
@@ -244,7 +274,7 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "the task identifier to be deleted",
+                        "description": "the task identifier to be deleted example ` + "`" + `74531653-252b-48c7-b562-63e82f5e3466` + "`" + `",
                         "name": "task_id",
                         "in": "path",
                         "required": true
@@ -302,7 +332,7 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "the task identifier to updated",
+                        "description": "the task identifier to updated example ` + "`" + `74531653-252b-48c7-b562-63e82f5e3466` + "`" + `",
                         "name": "task_id",
                         "in": "path",
                         "required": true
@@ -357,8 +387,10 @@ var doc = `{
             ],
             "properties": {
                 "summary": {
+                    "description": "Description of a task containing at most 2500 chars",
                     "type": "string",
-                    "maxLength": 2500
+                    "maxLength": 2500,
+                    "example": "My task description"
                 }
             }
         },
@@ -369,10 +401,14 @@ var doc = `{
             ],
             "properties": {
                 "id": {
-                    "type": "string"
+                    "description": "New task identifier following an uuid pattern",
+                    "type": "string",
+                    "example": "74531653-252b-48c7-b562-63e82f5e3466"
                 },
                 "status": {
-                    "type": "string"
+                    "description": "The response status, that can be OK or error",
+                    "type": "string",
+                    "example": "OK"
                 }
             }
         },
@@ -380,9 +416,12 @@ var doc = `{
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "description": "Filter status response",
+                    "type": "string",
+                    "example": "OK"
                 },
                 "tasks": {
+                    "description": "List of collected tasks",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.TaskSingleResponse"
@@ -394,11 +433,15 @@ var doc = `{
             "type": "object",
             "properties": {
                 "completed_date": {
-                    "type": "integer"
+                    "description": "The timestamp in seconds when the task was completed",
+                    "type": "integer",
+                    "example": 1645606033
                 },
                 "summary": {
+                    "description": "New task summary",
                     "type": "string",
-                    "maxLength": 2500
+                    "maxLength": 2500,
+                    "example": "A brand new task summary"
                 }
             }
         },
@@ -406,22 +449,34 @@ var doc = `{
             "type": "object",
             "properties": {
                 "completed_date": {
-                    "type": "integer"
+                    "description": "The timestamp when the task was completed",
+                    "type": "integer",
+                    "example": 1645606035
                 },
                 "created_at": {
-                    "type": "integer"
+                    "description": "The timestamp in seconds when the task was created",
+                    "type": "integer",
+                    "example": 1645606033
                 },
                 "modified_at": {
-                    "type": "integer"
+                    "description": "The timestamp in seconds when the task was last updated",
+                    "type": "integer",
+                    "example": 1645606033
                 },
                 "summary": {
-                    "type": "string"
+                    "description": "The task summary",
+                    "type": "string",
+                    "example": "My task summary"
                 },
                 "task_id": {
-                    "type": "string"
+                    "description": "The task identifier (To be removed)",
+                    "type": "string",
+                    "example": "74531653-252b-48c7-b562-63e82f5e3466"
                 },
                 "user_id": {
-                    "type": "string"
+                    "description": "The task owner (that might not be provided)",
+                    "type": "string",
+                    "example": "74531653-252b-48c7-b562-63e82f5e3466"
                 }
             }
         },
@@ -429,19 +484,29 @@ var doc = `{
             "type": "object",
             "properties": {
                 "completed_date": {
-                    "type": "integer"
+                    "description": "The timestamp when the task was completed",
+                    "type": "integer",
+                    "example": 1645606035
                 },
                 "created_at": {
-                    "type": "integer"
+                    "description": "The timestamp in seconds when the task was created",
+                    "type": "integer",
+                    "example": 1645606033
                 },
                 "modified_at": {
-                    "type": "integer"
+                    "description": "The timestamp in seconds when the task was last updated",
+                    "type": "integer",
+                    "example": 1645606033
                 },
                 "task_id": {
-                    "type": "string"
+                    "description": "The task identifier (To be removed)",
+                    "type": "string",
+                    "example": "74531653-252b-48c7-b562-63e82f5e3466"
                 },
                 "user_id": {
-                    "type": "string"
+                    "description": "The task owner (that might not be provided)",
+                    "type": "string",
+                    "example": "74531653-252b-48c7-b562-63e82f5e3466"
                 }
             }
         }

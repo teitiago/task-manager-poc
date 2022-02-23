@@ -18,21 +18,27 @@ func TestPublishConsume(t *testing.T) {
 	broker := NewRabbitMQBroker("task_exch", "task_queue")
 	defer broker.Close()
 
+	// channel
+	ch := make(chan string)
+
 	// Submit message
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 	broker.Publish(msg, routingKey, wg)
-	wg.Wait()
 
 	// Receive message
 	go broker.Consume(routingKey, func(payload []byte) bool {
+
 		escapedPayload := strings.ReplaceAll(string(payload), `\"`, `"`)
 		escapedPayload = strings.TrimSuffix(escapedPayload, `"`)
 		escapedPayload = strings.TrimPrefix(escapedPayload, `"`)
-		if escapedPayload != msg {
-			t.Errorf("expected %v got %v", msg, escapedPayload)
-		}
+		ch <- escapedPayload
 		return true
 	})
+
+	escapedPayload := <-ch
+	if escapedPayload != msg {
+		t.Errorf("expected %v got %v", msg, escapedPayload)
+	}
 
 }

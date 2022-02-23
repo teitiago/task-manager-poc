@@ -420,6 +420,7 @@ func TestGetTask(t *testing.T) {
 	}
 }
 
+// TestListTasks validates the correct behavior of ListTasks
 func TestListTasks(t *testing.T) {
 
 	timeLayout := "2006-01-02T15:04:05.000Z"

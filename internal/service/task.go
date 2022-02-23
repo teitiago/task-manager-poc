@@ -255,6 +255,7 @@ func (s *taskService) Patch(ctx context.Context, id uuid.UUID, request models.Ta
 
 	wg := &sync.WaitGroup{}
 	notify := false
+	// TODO: Add condition to avoid completing a task before the creation timestamp
 	if request.CompletedDate.Valid && request.CompletedDate.Time.UTC().Unix() > time.Now().UTC().Unix() {
 		zap.L().Error("cant complete tasks in the future", zap.Any("completed_date", task.CompletedDate.Time.String()), zap.String("request_id", requestID))
 		return models.Task{}, errors.New("completed date in the future")

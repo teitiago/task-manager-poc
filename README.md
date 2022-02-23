@@ -257,7 +257,7 @@ The logger level is done through Env Variables.
 ## Deployment
 
 The project has a Docker compose file that allows to create a development environment for both server and client. The a development environment can be 
-used through the following make command.
+used through the following make command. Note that there is a secret just to allow a lift of the dev environment.
 
 ```console
 $ make dev-env-up
